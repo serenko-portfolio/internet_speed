@@ -1,19 +1,22 @@
 package main
 
-import "errors"
+import (
+	"./internal/providers"
+	"errors"
+)
 
 func CheckConnection(providerName string) (float64, float64, error) {
-	var p ProviderInterface
+	var p providers.ProviderInterface
 	switch providerName {
 	case "Ookla":
-		p = &ProviderOokla{}
+		p = &providers.ProviderOokla{}
 	case "Fast":
-		p = &ProviderFast{}
+		p = &providers.ProviderFast{}
 	default:
 		return 0.0, 0.0, errors.New("invalid argument error")
 	}
-	p.runTest()
-	dSpeed := p.getDownloadData()
-	uSpeed := p.getUploadData()
+	p.RunTest()
+	dSpeed := p.GetDownloadData()
+	uSpeed := p.GetUploadData()
 	return dSpeed, uSpeed, nil
 }

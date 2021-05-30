@@ -1,4 +1,4 @@
-package main
+package providers
 
 import (
 	"context"
@@ -36,7 +36,7 @@ func normalizeData(speed string, units string) float64 {
 	}
 }
 
-func (provider *ProviderFast) runTest() error {
+func (provider *ProviderFast) RunTest() error {
 	ctx, cancel := chromedp.NewContext(
 		context.Background(),
 		chromedp.WithLogf(log.Printf),
@@ -67,10 +67,10 @@ func (provider *ProviderFast) runTest() error {
 	return nil
 }
 
-func (provider *ProviderFast) getUploadData() float64 {
+func (provider *ProviderFast) GetUploadData() float64 {
 	return provider.uploadSpeed
 }
 
-func (provider *ProviderFast) getDownloadData() float64 {
+func (provider *ProviderFast) GetDownloadData() float64 {
 	return provider.downloadSpeed
 }
