@@ -1,7 +1,7 @@
-package pkg_test
+package speed_test_test
 
 import (
-	"../internal/providers"
+	"../../internal/providers"
 	"errors"
 )
 
