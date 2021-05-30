@@ -1,7 +1,6 @@
 package main
 
 import (
-	"fmt"
 	"github.com/showwin/speedtest-go/speedtest"
 )
 
@@ -10,7 +9,7 @@ type ProviderOokla struct {
 	downloadSpeed float64
 }
 
-func (provider *ProviderOokla) RunTest() error {
+func (provider *ProviderOokla) runTest() error {
 	user, _ := speedtest.FetchUserInfo()
 	serverList, _ := speedtest.FetchServerList(user)
 	targets, _ := serverList.FindServer([]int{})
@@ -28,10 +27,10 @@ func (provider *ProviderOokla) RunTest() error {
 	return nil
 }
 
-func (provider *ProviderOokla) GetUploadData() (string, string) {
-	return fmt.Sprintf("%v", provider.uploadSpeed), "Kbps"
+func (provider *ProviderOokla) getUploadData() float64 {
+	return provider.uploadSpeed / 1024.0
 }
 
-func (provider *ProviderOokla) GetDownloadData() (string, string) {
-	return fmt.Sprintf("%v", provider.downloadSpeed), "Kbps"
+func (provider *ProviderOokla) getDownloadData() float64 {
+	return provider.downloadSpeed / 1024.0
 }

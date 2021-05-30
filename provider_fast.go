@@ -5,14 +5,13 @@ import (
 	"github.com/chromedp/cdproto/emulation"
 	"github.com/chromedp/chromedp"
 	"log"
+	"strconv"
 	"time"
 )
 
 type ProviderFast struct {
-	uploadSpeed       string
-	uploadSpeedUnit   string
-	downloadSpeed     string
-	downloadSpeedUnit string
+	uploadSpeed   float64
+	downloadSpeed float64
 }
 
 type Fast struct {
@@ -22,7 +21,22 @@ type Fast struct {
 	DownUnit string
 }
 
-func (provider *ProviderFast) RunTest() error {
+func normalizeData(speed string, units string) float64 {
+	parsedSpeed, err := strconv.ParseFloat(speed, 64)
+	if err != nil {
+		return -1.0
+	}
+	switch units {
+	case "Kbps":
+		return parsedSpeed / 1024.0
+	case "Gbps":
+		return parsedSpeed * 1024.0
+	default:
+		return parsedSpeed
+	}
+}
+
+func (provider *ProviderFast) runTest() error {
 	ctx, cancel := chromedp.NewContext(
 		context.Background(),
 		chromedp.WithLogf(log.Printf),
@@ -31,7 +45,7 @@ func (provider *ProviderFast) RunTest() error {
 	ctx, cancel = context.WithTimeout(ctx, 180*time.Second)
 	defer cancel()
 	fast := new(Fast)
-	cmds := []chromedp.Action{
+	actions := []chromedp.Action{
 		emulation.SetUserAgentOverride(`chromedp/chromedp v0.6.10`),
 		chromedp.Navigate(`https://fast.com`),
 		chromedp.ScrollIntoView(`footer`),
@@ -39,26 +53,24 @@ func (provider *ProviderFast) RunTest() error {
 		chromedp.Text(`#speed-value.succeeded`, &fast.Down, chromedp.NodeVisible, chromedp.ByQuery),
 		chromedp.Text(`#speed-units.succeeded`, &fast.DownUnit, chromedp.NodeVisible, chromedp.ByQuery),
 	}
-	cmds = append(cmds, chromedp.Click(`#show-more-details-link`),
+	actions = append(actions, chromedp.Click(`#show-more-details-link`),
 		chromedp.WaitVisible(`#upload-value.succeeded`),
 		chromedp.Text(`#upload-value.succeeded`, &fast.Up, chromedp.NodeVisible, chromedp.ByQuery),
 		chromedp.Text(`#upload-units.succeeded`, &fast.UpUnit, chromedp.NodeVisible, chromedp.ByQuery),
 	)
-	err := chromedp.Run(ctx, cmds...)
+	err := chromedp.Run(ctx, actions...)
 	if err != nil {
 		return err
 	}
-	provider.uploadSpeedUnit = fast.UpUnit
-	provider.uploadSpeed = fast.Up
-	provider.downloadSpeedUnit = fast.DownUnit
-	provider.downloadSpeed = fast.Down
+	provider.uploadSpeed = normalizeData(fast.Up, fast.UpUnit)
+	provider.downloadSpeed = normalizeData(fast.Down, fast.DownUnit)
 	return nil
 }
 
-func (provider *ProviderFast) GetUploadData() (string, string) {
-	return provider.uploadSpeed, provider.uploadSpeedUnit
+func (provider *ProviderFast) getUploadData() float64 {
+	return provider.uploadSpeed
 }
 
-func (provider *ProviderFast) GetDownloadData() (string, string) {
-	return provider.downloadSpeed, provider.downloadSpeedUnit
+func (provider *ProviderFast) getDownloadData() float64 {
+	return provider.downloadSpeed
 }
