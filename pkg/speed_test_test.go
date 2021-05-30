@@ -1,4 +1,4 @@
-package speed_test
+package pkg_test
 
 import (
 	"github.com/stretchr/testify/assert"
