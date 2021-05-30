@@ -1,7 +1,7 @@
 package main
 
 import (
-	test "test.go"
+	"github.com/serenko-portfolio/speed_test"
 )
 
 func main() {
