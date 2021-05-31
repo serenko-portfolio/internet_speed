@@ -1,4 +1,4 @@
-##Internet speed tester
+## Internet speed tester
 
 Given GoLang module allows user to know current internet upload and download speed. You can use one of two possible speed testing providers: Ookla and Fast.
 In case you entered wrong provider name value it returns error.
