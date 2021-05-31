@@ -4,11 +4,14 @@ import (
 	"github.com/showwin/speedtest-go/speedtest"
 )
 
+// providerOokla implementation for Ookla provider
 type providerOokla struct {
 	uploadSpeed   float64
 	downloadSpeed float64
 }
 
+// runTest tests your internet connection, returns error in case of any problems, uses 	"github.com/showwin/speedtest-go/speedtest" library to
+// get download/upload speed in kilobytes per second
 func (provider *providerOokla) runTest() error {
 	user, _ := speedtest.FetchUserInfo()
 	serverList, _ := speedtest.FetchServerList(user)
@@ -36,10 +39,12 @@ func (provider *providerOokla) runTest() error {
 	return nil
 }
 
-func (provider *providerOokla) getUploadData() float64 {
+// getUploadSpeed returns internet upload speed in Mbps
+func (provider *providerOokla) getUploadSpeed() float64 {
 	return provider.uploadSpeed / 1024.0
 }
 
-func (provider *providerOokla) getDownloadData() float64 {
+// getUploadSpeed returns internet upload speed in Mbps
+func (provider *providerOokla) getDownloadSpeed() float64 {
 	return provider.downloadSpeed / 1024.0
 }

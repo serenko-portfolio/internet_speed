@@ -9,11 +9,13 @@ import (
 	"time"
 )
 
+// providerFast implementation of providerInterface for Fast.com provider
 type providerFast struct {
 	uploadSpeed   float64
 	downloadSpeed float64
 }
 
+// fastStruct a structure to collect data from Fast.com site
 type fastStruct struct {
 	Up       string
 	Down     string
@@ -21,6 +23,7 @@ type fastStruct struct {
 	DownUnit string
 }
 
+// normalizeData normalizes speed and return it in Mbps as float64
 func normalizeData(speed string, units string) float64 {
 	parsedSpeed, err := strconv.ParseFloat(speed, 64)
 	if err != nil {
@@ -36,6 +39,8 @@ func normalizeData(speed string, units string) float64 {
 	}
 }
 
+// runTest tests your internet connection, returns error in case of any problems, uses headless chrome to get download/upload speed.
+// it uses approach described in this app 'https://github.com/adhocore/fast'
 func (provider *providerFast) runTest() error {
 	ctx, cancel := chromedp.NewContext(
 		context.Background(),
@@ -67,10 +72,12 @@ func (provider *providerFast) runTest() error {
 	return nil
 }
 
-func (provider *providerFast) getUploadData() float64 {
+// getUploadSpeed returns internet upload speed in Mbps
+func (provider *providerFast) getUploadSpeed() float64 {
 	return provider.uploadSpeed
 }
 
-func (provider *providerFast) getDownloadData() float64 {
+// getDownloadSpeed returns internet download speed in Mbps
+func (provider *providerFast) getDownloadSpeed() float64 {
 	return provider.downloadSpeed
 }
