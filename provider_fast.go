@@ -1,4 +1,4 @@
-package providers
+package internet_speed
 
 import (
 	"context"
@@ -9,12 +9,12 @@ import (
 	"time"
 )
 
-type ProviderFast struct {
+type providerFast struct {
 	uploadSpeed   float64
 	downloadSpeed float64
 }
 
-type Fast struct {
+type fastStruct struct {
 	Up       string
 	Down     string
 	UpUnit   string
@@ -36,7 +36,7 @@ func normalizeData(speed string, units string) float64 {
 	}
 }
 
-func (provider *ProviderFast) RunTest() error {
+func (provider *providerFast) runTest() error {
 	ctx, cancel := chromedp.NewContext(
 		context.Background(),
 		chromedp.WithLogf(log.Printf),
@@ -44,7 +44,7 @@ func (provider *ProviderFast) RunTest() error {
 	defer cancel()
 	ctx, cancel = context.WithTimeout(ctx, 180*time.Second)
 	defer cancel()
-	fast := new(Fast)
+	var fast = new(fastStruct)
 	actions := []chromedp.Action{
 		emulation.SetUserAgentOverride(`chromedp/chromedp v0.6.10`),
 		chromedp.Navigate(`https://fast.com`),
@@ -67,10 +67,10 @@ func (provider *ProviderFast) RunTest() error {
 	return nil
 }
 
-func (provider *ProviderFast) GetUploadData() float64 {
+func (provider *providerFast) getUploadData() float64 {
 	return provider.uploadSpeed
 }
 
-func (provider *ProviderFast) GetDownloadData() float64 {
+func (provider *providerFast) getDownloadData() float64 {
 	return provider.downloadSpeed
 }

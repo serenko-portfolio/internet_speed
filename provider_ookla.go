@@ -1,24 +1,33 @@
-package providers
+package internet_speed
 
 import (
 	"github.com/showwin/speedtest-go/speedtest"
 )
 
-type ProviderOokla struct {
+type providerOokla struct {
 	uploadSpeed   float64
 	downloadSpeed float64
 }
 
-func (provider *ProviderOokla) RunTest() error {
+func (provider *providerOokla) runTest() error {
 	user, _ := speedtest.FetchUserInfo()
 	serverList, _ := speedtest.FetchServerList(user)
 	targets, _ := serverList.FindServer([]int{})
 	uploadSpeed := 0.0
 	downloadSpeed := 0.0
 	for _, s := range targets {
-		s.PingTest()
-		s.DownloadTest(false)
-		s.UploadTest(false)
+		err := s.PingTest()
+		if err != nil {
+			return err
+		}
+		err = s.DownloadTest(false)
+		if err != nil {
+			return err
+		}
+		err = s.UploadTest(false)
+		if err != nil {
+			return err
+		}
 		uploadSpeed += s.ULSpeed
 		downloadSpeed += s.DLSpeed
 	}
@@ -27,10 +36,10 @@ func (provider *ProviderOokla) RunTest() error {
 	return nil
 }
 
-func (provider *ProviderOokla) GetUploadData() float64 {
+func (provider *providerOokla) getUploadData() float64 {
 	return provider.uploadSpeed / 1024.0
 }
 
-func (provider *ProviderOokla) GetDownloadData() float64 {
+func (provider *providerOokla) getDownloadData() float64 {
 	return provider.downloadSpeed / 1024.0
 }
