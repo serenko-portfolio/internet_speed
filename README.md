@@ -11,7 +11,7 @@ package main
 import "github.com/serenko-portfolio/internet_speed"
 
 func main() {
-	upload_speed,download_speed,err := internet_speed.CheckConnection("Ookla")
+	upload_speed,download_speed,err := internet_speed.GetInternetSpeed("Ookla")
 }
 
 ```
